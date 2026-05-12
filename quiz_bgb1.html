@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rechtstechnische Grundlagen – BGB I – Quiz</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(160deg,#1a2a4a 0%,#2d4a7a 60%,#1a2a4a 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{background:#fff;border-radius:20px;max-width:700px;width:100%;box-shadow:0 12px 60px rgba(0,0,0,.35);overflow:hidden}
+.header{background:linear-gradient(135deg,#1a2a4a,#2d4a7a);padding:26px 32px 20px;color:#fff}
+.header h1{font-size:1.2rem;font-weight:800;line-height:1.3;margin-bottom:4px}
+.header .sub{font-size:.8rem;opacity:.8}
+.progress-bar-bg{background:rgba(255,255,255,.2);border-radius:4px;height:6px;margin-top:14px}
+.progress-bar{background:#fff;border-radius:4px;height:6px;transition:width .4s ease}
+.progress-label{font-size:.74rem;opacity:.75;margin-top:5px;text-align:right}
+.body{padding:26px 32px 30px}
+.category-tag{display:inline-block;background:#eef2fc;color:#1a2a4a;font-size:.71rem;font-weight:700;border-radius:20px;padding:3px 11px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px}
+.question{font-size:.98rem;font-weight:700;color:#1a1a1a;line-height:1.5;margin-bottom:18px}
+.multi-hint{background:#fff8e0;border:1px solid #f4c033;border-radius:8px;padding:8px 14px;font-size:.79rem;color:#7a5500;margin-bottom:14px;display:none}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:11px;background:#f7f9fd;border:2px solid #dde4f0;border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s;font-size:.87rem;color:#222;line-height:1.45;text-align:left;width:100%}
+.option:hover:not(:disabled){border-color:#2d4a7a;background:#edf1fa}
+.option.selected{border-color:#2d4a7a;background:#dce6f7}
+.option.correct{border-color:#2a9d5c;background:#e6f7ee;color:#1a5c37}
+.option.wrong{border-color:#e05050;background:#fdeaea;color:#7a1a1a}
+.option:disabled{cursor:default}
+.option-letter{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:50%;background:#1a2a4a;color:#fff;font-size:.71rem;font-weight:700;flex-shrink:0}
+.option.correct .option-letter{background:#2a9d5c}
+.option.wrong .option-letter{background:#e05050}
+.option.selected .option-letter{background:#2d4a7a}
+.confirm-btn{display:none;margin-top:14px;background:#1a2a4a;color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:.91rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.confirm-btn:disabled{opacity:.4;cursor:default}
+.confirm-btn:not(:disabled):hover{opacity:.85}
+.feedback{display:none;margin-top:16px;border-radius:10px;padding:13px 15px;font-size:.84rem;line-height:1.55}
+.feedback.correct{background:#e6f7ee;border:1px solid #2a9d5c;color:#1a5c37}
+.feedback.wrong{background:#fdeaea;border:1px solid #e05050;color:#7a1a1a}
+.feedback-icon{font-weight:800;margin-bottom:4px;font-size:.93rem}
+.next-btn{display:none;margin-top:15px;background:linear-gradient(135deg,#1a2a4a,#2d4a7a);color:#fff;border:none;border-radius:10px;padding:13px 22px;font-size:.93rem;font-weight:700;cursor:pointer;width:100%;transition:opacity .2s,transform .15s}
+.next-btn:hover{opacity:.88;transform:translateY(-1px)}
+/* Results */
+.results{padding:30px}
+.results h2{font-size:1.35rem;font-weight:800;color:#1a2a4a;margin-bottom:6px}
+.score-big{font-size:3rem;font-weight:900;color:#1a2a4a;line-height:1}
+.score-label{font-size:.88rem;color:#666;margin-bottom:22px}
+.cat-results{display:flex;flex-direction:column;gap:9px;margin-bottom:26px}
+.cat-row{background:#f5f7fd;border:1px solid #dde4f0;border-radius:10px;padding:11px 15px}
+.cat-name{font-size:.8rem;font-weight:700;color:#1a2a4a;margin-bottom:5px}
+.cat-bar-bg{background:#dde4f0;border-radius:4px;height:8px}
+.cat-bar{background:linear-gradient(90deg,#1a2a4a,#2d4a7a);border-radius:4px;height:8px;transition:width .6s ease}
+.cat-pct{font-size:.74rem;color:#555;margin-top:3px;text-align:right}
+.restart-btn{background:linear-gradient(135deg,#1a2a4a,#2d4a7a);color:#fff;border:none;border-radius:12px;padding:14px 22px;font-size:.98rem;font-weight:700;cursor:pointer;width:100%;transition:opacity .2s}
+.restart-btn:hover{opacity:.88}
+.footer{text-align:center;padding:10px 32px 14px;font-size:.69rem;color:#bbb;border-top:1px solid #eee}
+</style>
+</head>
+<body>
+<div class="container" id="quiz-container">
+  <div class="header">
+    <h1>Rechtstechnische Grundlagen – BGB I</h1>
+    <div class="sub">Grundkurs Bürgerliches Recht I · Prof. Dr. Buchwitz · Uni Würzburg SS 2024</div>
+    <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar" style="width:1%"></div></div>
+    <div class="progress-label" id="progress-label">Frage 1 von 100</div>
+  </div>
+  <div class="body" id="quiz-body">
+    <div class="category-tag" id="cat-tag"></div>
+    <div class="question" id="question-text"></div>
+    <div class="multi-hint" id="multi-hint">☑ Mehrfachauswahl – wählen Sie alle zutreffenden Antworten und bestätigen Sie dann.</div>
+    <div class="options" id="options"></div>
+    <button class="confirm-btn" id="confirm-btn" onclick="confirmMulti()" disabled>Auswahl bestätigen</button>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Weiter →</button>
+  </div>
+  <div class="footer">Basiert auf: Skript Grundkurs Bürgerliches Recht I, SS 2024 · Prof. Dr. W. Buchwitz · Julius-Maximilians-Universität Würzburg</div>
+</div>
+
+<script>
+const QUESTIONS = [
+
+// ── KATEGORIE 1: Einführung ins Recht & Privatrecht (15) ──────────────────
+{cat:"Einführung & Privatrecht",
+ q:"Was unterscheidet Privatrecht grundlegend vom öffentlichen Recht?",
+ o:["Im Privatrecht stehen sich die Beteiligten gleichgeordnet gegenüber","Im öffentlichen Recht stehen sich die Beteiligten gleichgeordnet gegenüber","Das Privatrecht gilt nur für natürliche Personen, nicht für juristische","Das Privatrecht wird ausschließlich durch staatliche Gerichte durchgesetzt"],
+ a:0,
+ e:"Das Privatrecht ist durch das Gleichordnungsverhältnis der Beteiligten geprägt (z.B. Käufer und Verkäufer). Im öffentlichen Recht hingegen besteht ein Über-/Unterordnungsverhältnis, z.B. zwischen Staat und Bürger."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Wann trat das Bürgerliche Gesetzbuch (BGB) in Kraft?",
+ o:["Am 1. Januar 1871, mit Gründung des Deutschen Reiches","Am 1. Januar 1900, zu Beginn des 20. Jahrhunderts","Am 1. April 1933, nach der nationalsozialistischen Machtübernahme","Am 1. Januar 1950, nach Gründung der Bundesrepublik"],
+ a:1,
+ e:"Das BGB trat am 1. Januar 1900 in Kraft. Es wurde bereits 1896 nach jahrelangen Beratungen verabschiedet und gilt als Ergebnis der Vereinheitlichung des deutschen Privatrechts."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Nach welchem Grundprinzip ist der Aufbau des BGB strukturiert?",
+ o:["Chronologisches Prinzip: ältere Rechtsregeln vor jüngeren","Pandektenmethode: Allgemeines wird vor das Besondere gezogen","Kasuistisches Prinzip: jeder Einzelfall wird gesondert geregelt","Territorialprinzip: Regelungen nach Bundesländern geordnet"],
+ a:1,
+ e:"Das BGB folgt der Pandektenmethode: Gemeinsame Grundsätze sind im Allgemeinen Teil geregelt, der für alle nachfolgenden Bücher gilt. Dadurch werden Wiederholungen vermieden und eine klare Systematik erreicht."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Aus wie vielen Büchern besteht das BGB, und welches ist das erste?",
+ o:["Drei Bücher, das erste ist das Schuldrecht","Vier Bücher, das erste ist das Sachenrecht","Fünf Bücher, das erste ist der Allgemeine Teil","Sechs Bücher, das erste ist das Familienrecht"],
+ a:2,
+ e:"Das BGB besteht aus fünf Büchern: Allgemeiner Teil (§§ 1–240), Schuldrecht (§§ 241–853), Sachenrecht (§§ 854–1296), Familienrecht (§§ 1297–1921) und Erbrecht (§§ 1922–2385)."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Was ist das Trennungsprinzip im deutschen Zivilrecht?",
+ o:["Trennung von Gerichtsbarkeit und Verwaltung","Trennung von Verpflichtungsgeschäft und Verfügungsgeschäft","Trennung von natürlichen und juristischen Personen","Trennung von Privat- und öffentlichem Recht"],
+ a:1,
+ e:"Das Trennungsprinzip besagt, dass Verpflichtungs- und Verfügungsgeschäft rechtlich eigenständig sind. Der Kaufvertrag (Verpflichtung) und die Übereignung der Sache (Verfügung) sind zwei getrennte Rechtsgeschäfte."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Was besagt das Abstraktionsprinzip?",
+ o:["Das Verfügungsgeschäft ist in seiner Wirksamkeit unabhängig vom Verpflichtungsgeschäft","Verpflichtung und Verfügung sind stets gemeinsam wirksam oder unwirksam","Das Schuldrecht ist völlig unabhängig vom Sachenrecht geregelt","Abstrakte Regelungen stehen grundsätzlich vor konkreten Einzelfällen"],
+ a:0,
+ e:"Das Abstraktionsprinzip ist die Konsequenz aus dem Trennungsprinzip: Die Wirksamkeit des Verfügungsgeschäfts (z.B. Eigentumsübertragung) ist abstrakt, also losgelöst von der Wirksamkeit des Kausalgeschäfts (z.B. Kaufvertrag)."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Was ist ein Verpflichtungsgeschäft?",
+ o:["Ein Rechtsgeschäft, das einen Rechtserfolg unmittelbar herbeiführt","Ein Rechtsgeschäft, das eine Pflicht zur künftigen Leistung begründet","Ein Vertrag, durch den Eigentum sofort übertragen wird","Eine Willenserklärung ohne rechtliche Bindungswirkung"],
+ a:1,
+ e:"Verpflichtungsgeschäfte begründen eine Pflicht zur künftigen Leistung, z.B. beim Kaufvertrag die Pflicht zur Übergabe und Übereignung der Sache sowie zur Kaufpreiszahlung. Sie führen den Rechtserfolg nicht selbst herbei."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Welche Aussage zum Schuldrecht im BGB ist korrekt?",
+ o:["Das Schuldrecht beginnt mit § 433 BGB (Kaufvertrag)","Das Schuldrecht besteht nur aus dem Besonderen Teil ab § 433 BGB","Das Schuldrecht gliedert sich in einen Allgemeinen Teil und einen Besonderen Teil","Das Schuldrecht enthält ausschließlich Regelungen über Verträge"],
+ a:2,
+ e:"Das Schuldrecht hat zwei Teile: Der Allgemeine Teil (§§ 241–432 BGB) enthält übergreifende Regelungen wie Entstehung, Inhalt und Erlöschen von Schuldverhältnissen. Der Besondere Teil (§§ 433 ff.) regelt einzelne Vertragstypen wie Kauf, Miete, Werkvertrag."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Was versteht man unter einer 'invitatio ad offerendum'?",
+ o:["Ein rechtlich bindendes Angebot zum Vertragsabschluss","Eine bloße Aufforderung zur Abgabe eines Angebots ohne Bindungswirkung","Eine nachträgliche Zustimmung zu einem Vertragsangebot","Eine einseitige Willenserklärung ohne Empfänger"],
+ a:1,
+ e:"Die 'invitatio ad offerendum' (Einladung zur Angebotsabgabe) ist keine bindende Willenserklärung, sondern nur eine Aufforderung, ein Angebot zu machen. Typisches Beispiel: die Warenauslage im Schaufenster oder ein Katalog."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Was unterscheidet eine Rechtsnorm von bloßen gesellschaftlichen Regeln?",
+ o:["Rechtsnormen gelten nur für Kaufleute, nicht für Privatpersonen","Rechtsnormen werden vom Staat gesetzt und durch staatliche Institutionen durchgesetzt","Rechtsnormen entstehen ausschließlich durch parlamentarische Gesetze","Rechtsnormen sind stets schriftlich niedergelegt und kodifiziert"],
+ a:1,
+ e:"Der entscheidende Unterschied liegt in der staatlichen Sanktionierbarkeit: Rechtsnormen werden vom Staat (Legislative) gesetzt und können durch staatliche Institutionen (Gerichte, Vollstreckungsorgane) durchgesetzt werden."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Wofür steht die Abkürzung 'BGB'?",
+ o:["Bundesgesetzbuch für Gemeinschaftsrecht","Bürgerliches Gesetzbuch","Basisgesetzbuch für Grundrechte","Bundesgericht für Bürgerrechte"],
+ a:1,
+ e:"BGB steht für Bürgerliches Gesetzbuch, das zentrale Privatrechtsgesetzbuch Deutschlands. Es enthält die grundlegenden Regelungen des Zivilrechts und hat derzeit ca. 2.385 Paragraphen."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Was versteht man unter einem 'Verfügungsgeschäft'?",
+ o:["Ein Vertrag, der eine Zahlungspflicht für die Zukunft begründet","Ein Rechtsgeschäft, das unmittelbar auf ein bestehendes Recht einwirkt","Ein Rechtsgeschäft, das ausschließlich Pflichten begründet, aber keine überträgt","Ein einseitiges Rechtsgeschäft ohne Mitwirkung eines Empfängers"],
+ a:1,
+ e:"Verfügungsgeschäfte wirken unmittelbar auf ein bestehendes Recht ein, indem sie es übertragen, belasten, ändern oder aufheben. Beispiele: Übereignung einer Sache (§ 929 BGB), Abtretung einer Forderung (§ 398 BGB)."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Was ist eine 'juristische Person' im Sinne des BGB?",
+ o:["Jede volljährige natürliche Person mit vollständiger Rechtsfähigkeit","Eine vom Gesetz als Rechtsträger anerkannte Organisation, z.B. GmbH oder Verein","Eine Person, die an einer juristischen Fakultät studiert hat","Jede Person, die am Rechtsverkehr als Unternehmer teilnimmt"],
+ a:1,
+ e:"Juristische Personen sind vom Gesetz als Rechtssubjekte anerkannte Organisationen. Sie können Rechte erwerben, Pflichten eingehen und vor Gericht klagen oder verklagt werden. Beispiele: GmbH, AG, eingetragener Verein (e.V.)."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Was bedeutet Privatautonomie?",
+ o:["Das Recht des Staates, Privatverträge einseitig zu ändern","Die Freiheit, Rechtsverhältnisse durch eigene Willensentscheidungen zu gestalten","Die Autonomie der Gerichte bei der Auslegung privater Verträge","Die Freiheit, staatliche Gesetze durch private Vereinbarungen zu ersetzen"],
+ a:1,
+ e:"Privatautonomie ist das Grundprinzip des Privatrechts: Jeder Einzelne kann seine Rechtsverhältnisse durch eigene Willenserklärungen frei gestalten. Sie umfasst Vertragsfreiheit, Testierfreiheit und Eigentumsfreiheit, findet aber ihre Grenzen in zwingenden Normen."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Welche Paragraphen enthalten den Allgemeinen Teil des BGB?",
+ o:["§§ 1–240 BGB","§§ 241–432 BGB","§§ 433–853 BGB","§§ 854–1296 BGB"],
+ a:0,
+ e:"Der Allgemeine Teil des BGB umfasst die §§ 1–240 und enthält übergreifende Grundsätze: Personen, Sachen, Rechtsgeschäfte, Fristen, Verjährung sowie allgemeine Vorschriften, die für alle anderen Bücher des BGB gelten."},
+
+// ── KATEGORIE 2: Willenserklärungen & Vertragslehre (25) ──────────────────
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was ist eine Willenserklärung?",
+ o:["Jede mündliche Äußerung einer Person im alltäglichen Leben","Die Äußerung eines auf einen Rechtserfolg gerichteten Willens","Ein schriftliches Dokument, das notariell beglaubigt sein muss","Ein einseitiges Schriftstück ohne Empfänger"],
+ a:1,
+ e:"Eine Willenserklärung ist die Äußerung eines Rechtsfolgewillens – also eines Willens, der auf die Herbeiführung einer bestimmten Rechtsfolge gerichtet ist. Sie ist das zentrale Tatbestandsmerkmal jedes Rechtsgeschäfts."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Welche subjektiven Elemente gehören zum Tatbestand einer Willenserklärung?",
+ o:["Nur der Handlungswille als einziges subjektives Element","Handlungswille, Erklärungsbewusstsein und Geschäftswille","Erklärungsbewusstsein und Geschäftswille, aber kein Handlungswille","Handlungswille und Erklärungsbewusstsein, aber kein Geschäftswille"],
+ a:1,
+ e:"Der subjektive Tatbestand einer WE umfasst drei Elemente: (1) Handlungswille = Wille zur Handlung selbst, (2) Erklärungsbewusstsein = Bewusstsein, eine rechtlich relevante Erklärung abzugeben, und (3) Geschäftswille = Wille zu einem bestimmten Rechtsgeschäft."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Wann gilt eine Willenserklärung unter Abwesenden als zugegangen (§ 130 BGB)?",
+ o:["Sobald sie vom Erklärenden abgesendet wurde","Sobald sie in den Machtbereich des Empfängers gelangt ist und er unter normalen Umständen Kenntnis nehmen kann","Sobald der Empfänger sie tatsächlich gelesen hat","Sobald sie beim Briefzentrum der Post angekommen ist"],
+ a:1,
+ e:"Nach § 130 BGB geht eine WE unter Abwesenden zu, sobald sie so in den Machtbereich des Empfängers gelangt, dass dieser unter normalen Umständen die Möglichkeit der Kenntnisnahme hat. Das tatsächliche Lesen ist nicht erforderlich."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was regelt § 130 Abs. 1 S. 2 BGB zum Widerruf einer Willenserklärung?",
+ o:["Der Widerruf ist nach Zugang der WE stets möglich","Der Widerruf muss dem Empfänger vor oder gleichzeitig mit der WE zugehen","Der Widerruf ist nur innerhalb von 14 Tagen nach Zugang zulässig","Der Widerruf erfordert immer die Schriftform"],
+ a:1,
+ e:"Nach § 130 Abs. 1 S. 2 BGB wird eine WE unter Abwesenden unwirksam, wenn dem Empfänger ein Widerruf zugeht, bevor oder in dem Augenblick, in dem ihm die WE zugeht. Der Widerruf muss also zeitlich vorher oder gleichzeitig ankommen."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Wann gilt eine Willenserklärung unter Anwesenden als zugegangen?",
+ o:["Wenn sie schriftlich überreicht und unterschrieben wurde","Mit tatsächlicher Wahrnehmung durch den Empfänger","Erst nach Ablauf einer angemessenen Überlegungsfrist","Nur wenn der Empfänger ausdrücklich zustimmt"],
+ a:1,
+ e:"Unter Anwesenden wird eine Willenserklärung grundsätzlich sofort zugänglich gemacht; sie geht zu, wenn sie tatsächlich wahrgenommen wird, also wenn der Empfänger sie hört, liest oder anderweitig zur Kenntnis nehmen kann."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was ist eine empfangsbedürftige Willenserklärung?",
+ o:["Eine WE, die nur gegenüber einem Gericht abgegeben werden kann","Eine WE, die erst mit Zugang beim Empfänger wirksam wird","Eine WE, die einer besonderen Formvorschrift bedarf","Eine WE, die schriftlich bestätigt werden muss"],
+ a:1,
+ e:"Empfangsbedürftige WE werden erst mit ihrem Zugang beim Empfänger wirksam, z.B. Angebot und Annahme eines Vertrags, Kündigung, Anfechtung. Nicht empfangsbedürftig sind z.B. das Testament und der Auslobungsbeschluss."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was ist Voraussetzung für die Wirksamkeit eines Angebots?",
+ o:["Das Angebot muss immer schriftlich und notariell beurkundet sein","Das Angebot muss bestimmt genug sein und alle wesentlichen Vertragsbestandteile enthalten","Das Angebot darf nicht länger als 14 Tage offen stehen","Das Angebot muss ausdrücklich als 'Angebot' bezeichnet werden"],
+ a:1,
+ e:"Ein wirksames Angebot muss alle wesentlichen Vertragsbestandteile (essentialia negotii) enthalten – beim Kaufvertrag z.B. Kaufsache und Preis – und so bestimmt sein, dass der Empfänger es durch ein einfaches 'Ja' annehmen kann."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was gilt nach § 150 Abs. 2 BGB für eine Annahme mit Erweiterungen oder Änderungen?",
+ o:["Sie ist wirksam, wenn die Änderungen geringfügig sind","Sie gilt als neues Angebot des Annehmenden","Sie führt sofort zum Vertragsschluss mit den geänderten Bedingungen","Sie bedarf der schriftlichen Genehmigung des ursprünglichen Anbieters"],
+ a:1,
+ e:"Nach § 150 Abs. 2 BGB gilt eine Annahme unter Erweiterungen, Einschränkungen oder sonstigen Änderungen als Ablehnung verbunden mit einem neuen Angebot. Ein Kaufmäklerischer Vertragsschluss kommt so nicht zustande."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was ist ein 'offener Dissens' nach § 154 BGB?",
+ o:["Ein versteckter Widerspruch in den Willenserklärungen beider Parteien","Ein Fall, in dem sich die Parteien bewusst noch nicht über alle Punkte geeinigt haben","Eine sittenwidrige Vereinbarung im Sinne von § 138 BGB","Eine Willenserklärung mit bewusst unvollständigen Erklärungsinhalten"],
+ a:1,
+ e:"Beim offenen Dissens (§ 154 BGB) sind sich die Parteien bewusst, dass sie sich noch nicht über alle Vertragspunkte geeinigt haben. Im Zweifel ist dann kein Vertrag zustande gekommen."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Welche Pflichten entstehen aus einem Kaufvertrag nach § 433 BGB?",
+ o:["Nur die Pflicht des Käufers zur Zahlung des Kaufpreises","Pflicht des Verkäufers zur Übergabe/Übereignung und Pflicht des Käufers zur Zahlung","Nur die Pflicht des Verkäufers zur mangelfreien Lieferung","Pflicht zur Beurkundung und Eintragung ins Grundbuch"],
+ a:1,
+ e:"§ 433 BGB begründet synallagmatische Pflichten: Der Verkäufer schuldet die Übergabe der Sache und die Verschaffung des Eigentums (Abs. 1), der Käufer schuldet die Zahlung des Kaufpreises und die Abnahme der Sache (Abs. 2)."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Gilt Schweigen im deutschen Zivilrecht grundsätzlich als Willenserklärung?",
+ o:["Ja, Schweigen gilt stets als Zustimmung nach dem Rechtsgrundsatz 'qui tacet consentire videtur'","Nein, Schweigen ist grundsätzlich keine Willenserklärung","Ja, Schweigen gilt immer als Ablehnung eines Angebots","Ja, sofern die Parteien vorher eine dahingehende Vereinbarung getroffen haben"],
+ a:1,
+ e:"Im deutschen Recht gilt Schweigen grundsätzlich nicht als Willenserklärung. Ausnahmen bestehen kraft Gesetzes (z.B. kaufmännisches Bestätigungsschreiben) oder durch ausdrückliche vorherige Vereinbarung der Parteien."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was versteht man unter dem 'objektiven Empfängerhorizont' bei der Auslegung?",
+ o:["Der Empfänger kann den Vertrag frei nach seinem subjektiven Verständnis auslegen","Die Willenserklärung ist so auszulegen, wie ein verständiger Empfänger sie verstehen durfte","Das Gericht legt WE stets nach dem Wortlaut aus, ohne Rücksicht auf den Willen","Der Wille des Erklärenden hat stets Vorrang vor dem Verständnis des Empfängers"],
+ a:1,
+ e:"Nach §§ 133, 157 BGB sind WE nach dem objektiven Empfängerhorizont auszulegen: Maßstab ist, wie ein verständiger, redlicher Empfänger die Erklärung bei Berücksichtigung von Treu und Glauben verstehen durfte – nicht der tatsächliche innere Wille."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Welche Auslegungsmethoden kennt die juristische Methodenlehre?",
+ o:["Nur grammatische und teleologische Auslegung","Grammatische, systematische, historische und teleologische Auslegung","Logische, wortlautgetreue und richterliche Auslegung","Buchstäbliche, analoge und restriktive Auslegung"],
+ a:1,
+ e:"Die klassischen vier Auslegungsmethoden sind: (1) Grammatische Auslegung (Wortlaut), (2) Systematische Auslegung (Stellung im Gesetz), (3) Historische Auslegung (Entstehungsgeschichte) und (4) Teleologische Auslegung (Sinn und Zweck)."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was ist ein 'versteckter Dissens' nach § 155 BGB?",
+ o:["Ein absichtlich verborgener Vertragsinhalt einer Partei","Ein Fall, in dem Parteien glauben, sich geeinigt zu haben, aber über einen Punkt tatsächlich verschiedener Meinung sind","Ein nichtig vereinbarter Vertragsbestandteil durch List oder Täuschung","Ein Irrtum des Erklärenden über die wesentlichen Geschäftsgrundlagen"],
+ a:1,
+ e:"Beim versteckten Dissens (§ 155 BGB) glauben beide Parteien, einen Vertrag geschlossen zu haben, sind aber über einen Punkt unbewusst verschiedener Meinung. Der Vertrag gilt dann als zustande gekommen, soweit die Parteien sich geeinigt haben."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Wann liegt eine konkludente Willenserklärung vor?",
+ o:["Wenn die WE ausdrücklich und unmissverständlich geäußert wird","Wenn der Wille durch schlüssiges Verhalten ohne ausdrückliche Erklärung zum Ausdruck kommt","Wenn die WE in einem notariellen Akt erklärt wird","Wenn eine WE durch Nicken oder Handzeichen ausgedrückt wird"],
+ a:1,
+ e:"Eine konkludente (schlüssige) WE liegt vor, wenn der Rechtsfolgewille nicht ausdrücklich, sondern durch Verhalten zum Ausdruck gebracht wird, aus dem auf einen bestimmten Rechtsfolgewillen geschlossen werden kann (z.B. Einsteigen in einen Bus als Annahme eines Beförderungsvertrags)."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was bedeutet 'Bindungswirkung' eines Angebots?",
+ o:["Der Anbietende kann sein Angebot jederzeit und ohne Folgen widerrufen","Der Anbieter ist an sein Angebot gebunden und kann es nicht ohne Weiteres zurücknehmen","Das Angebot ist erst nach schriftlicher Bestätigung bindend","Die Bindungswirkung entsteht erst nach Ablauf der Annahmefrist"],
+ a:1,
+ e:"Ein Angebot entfaltet Bindungswirkung (§ 145 BGB): Der Anbietende ist grundsätzlich an sein Angebot gebunden und kann es nur widerrufen, wenn der Widerruf dem Empfänger vor oder gleichzeitig mit dem Angebot zugeht (§ 130 Abs. 1 S. 2 BGB)."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was ist der Unterschied zwischen einem Vertreter und einem Boten?",
+ o:["Ein Bote gibt eine eigene WE ab, ein Vertreter übermittelt eine fremde","Ein Vertreter gibt eine eigene WE im Namen des Vertretenen ab, ein Bote übermittelt nur eine fremde WE","Bote und Vertreter geben beide eine fremde WE im Namen anderer ab","Ein Vertreter handelt immer schriftlich, ein Bote immer mündlich"],
+ a:1,
+ e:"Der Vertreter gibt eine eigene Willenserklärung im Namen des Vertretenen ab (§§ 164 ff. BGB). Der Bote übermittelt dagegen nur eine fertig gebildete fremde WE seines Auftraggebers ohne eigenen Gestaltungsspielraum."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Wie kommt ein Vertrag nach dem BGB zustande?",
+ o:["Durch Unterzeichnung einer schriftlichen Urkunde durch beide Parteien","Durch zwei übereinstimmende Willenserklärungen, Angebot und Annahme","Durch einseitige Erklärung einer Vertragspartei vor einem Notar","Durch staatliche Genehmigung eines von einer Partei gestellten Antrags"],
+ a:1,
+ e:"Ein Vertrag kommt durch zwei inhaltlich übereinstimmende Willenserklärungen zustande: Angebot und Annahme. Die Annahme muss rechtzeitig und vorbehaltlos erfolgen (§§ 145 ff. BGB). Eine besondere Form ist grundsätzlich nicht erforderlich."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was gilt für die Auslegung einer Willenserklärung nach § 133 BGB?",
+ o:["Es ist ausschließlich auf den buchstäblichen Sinn des Wortlauts abzustellen","Bei der Auslegung ist der wirkliche Wille zu erforschen und nicht am buchstäblichen Sinn zu haften","Verträge sind stets nach dem Wortlaut auszulegen, ohne Rücksicht auf Umstände","Für die Auslegung sind ausschließlich schriftliche Begleitumstände zu berücksichtigen"],
+ a:1,
+ e:"§ 133 BGB bestimmt: Bei der Auslegung einer WE ist der wirkliche Wille zu erforschen und nicht am buchstäblichen Sinne des Ausdrucks zu haften. Dabei sind alle Umstände des Einzelfalls heranzuziehen."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Welche Aussage zu § 157 BGB über die Auslegung von Verträgen ist zutreffend?",
+ o:["Verträge sind nach dem mutmaßlichen Willen einer Partei auszulegen","Verträge sind so auszulegen, wie Treu und Glauben mit Rücksicht auf die Verkehrssitte es erfordern","Verträge werden ausschließlich zum Nachteil des Verfassers ausgelegt","Verträge sind streng grammatisch nach ihrem Wortlaut auszulegen"],
+ a:1,
+ e:"§ 157 BGB normiert die ergänzende Vertragsauslegung nach Treu und Glauben und Verkehrssitte. Er ergänzt § 133 BGB und gilt für Verträge: Lücken werden durch das geschlossen, was die Parteien bei sachgerechter Abwägung vereinbart hätten."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was ist das 'Erklärungsbewusstsein' als Element der Willenserklärung?",
+ o:["Der Wille, eine wirtschaftlich sinnvolle Handlung vorzunehmen","Das Bewusstsein, eine rechtlich relevante Erklärung abzugeben","Der Wille zu einem ganz bestimmten Rechtsgeschäft","Die Absicht, einen anderen zu einer Handlung zu veranlassen"],
+ a:1,
+ e:"Erklärungsbewusstsein (auch: Erklärungsbewusstsein oder Rechtsbindungswille) ist das Bewusstsein, dass die eigene Erklärung oder das eigene Verhalten rechtlich erheblich ist. Umstr.: ob fehlendes Erklärungsbewusstsein zur Unwirksamkeit führt."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Wann liegt eine 'Abgabe' einer Willenserklärung vor?",
+ o:["Wenn die WE den Empfänger tatsächlich erreicht hat","Wenn der Erklärende alles Erforderliche getan hat, damit die WE in den Rechtsverkehr gelangt","Wenn die WE von einem Gericht als wirksam anerkannt wurde","Wenn die WE schriftlich und eigenhändig unterschrieben wurde"],
+ a:1,
+ e:"Abgabe der WE meint, dass der Erklärende alles ihm Zumutbare und Erforderliche getan hat, damit die WE in den Rechtsverkehr gelangt. Erst dann beginnt die WE ihren Weg zum Empfänger. Bei empfangsbedürftigen WE kommt es dann noch auf den Zugang an."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Was gilt nach dem BGB für eine verspätete Annahme eines Angebots?",
+ o:["Sie ist voll wirksam, sofern der Anbietende nicht widerspricht","Sie gilt als neues Angebot nach § 150 Abs. 1 BGB","Sie verlängert die Annahmefrist automatisch um weitere 14 Tage","Sie ist generell unwirksam ohne Ausnahme"],
+ a:1,
+ e:"Eine verspätete Annahme gilt nach § 150 Abs. 1 BGB als neues Angebot. Damit dreht sich die Rollenzuweisung um: Nun ist der ursprüngliche Anbietende der Empfänger eines neuen Angebots, das er annehmen oder ablehnen kann."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Welche Willenserklärungen sind nach dem BGB nicht empfangsbedürftig?",
+ o:["Kündigung und Anfechtung","Vertragsangebot und Vertragsannahme","Testament und Auslobung","Vollmacht und Genehmigung"],
+ a:2,
+ e:"Nicht empfangsbedürftige WE werden wirksam ohne Zugang beim Empfänger, z.B. das Testament (wirkt nach dem Tod des Erblassers) und die Auslobung (§ 657 BGB, die durch öffentliche Bekanntmachung wirksam wird)."},
+
+// ── KATEGORIE 3: Anfechtung (15) ──────────────────────────────────────────
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Welchen Irrtum erfasst § 119 Abs. 1 BGB?",
+ o:["Den Motivirrtum über die Beweggründe zum Vertragsschluss","Inhaltsirrtum und Erklärungsirrtum","Den Eigenschaftsirrtum über wesentliche Eigenschaften einer Person oder Sache","Den Übermittlungsirrtum durch fehlerhafte Übermittlung"],
+ a:1,
+ e:"§ 119 Abs. 1 BGB erfasst den Inhaltsirrtum (Erklärender irrt über die Bedeutung seiner Erklärung) und den Erklärungsirrtum (Erklärender irrt sich im Ausdruck, z.B. Verschreiben oder Versprechen). Beide begründen ein Anfechtungsrecht."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Was regelt § 119 Abs. 2 BGB?",
+ o:["Den Irrtum über eine unbedeutende Eigenschaft der Kaufsache","Die Anfechtung wegen Eigenschaftsirrtum über verkehrswesentliche Eigenschaften","Die Anfechtung wegen arglistiger Täuschung durch den Vertragspartner","Die Anfechtung bei fehlerhafter Übermittlung durch einen Boten"],
+ a:1,
+ e:"§ 119 Abs. 2 BGB ermöglicht die Anfechtung bei einem Irrtum über wesentliche Eigenschaften einer Person oder Sache, die im Verkehr als bedeutsam angesehen werden (verkehrswesentliche Eigenschaften). Beispiel: Irrtum über das Material einer Sache."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Was ist die Rechtsfolge einer wirksamen Anfechtung nach § 142 BGB?",
+ o:["Das Rechtsgeschäft wird für die Zukunft unwirksam (ex nunc)","Das Rechtsgeschäft gilt als von Anfang an nichtig (ex tunc)","Das Rechtsgeschäft bleibt wirksam, aber der Anfechtende erhält Schadensersatz","Das Rechtsgeschäft wird schwebend unwirksam bis zur Entscheidung des Gerichts"],
+ a:1,
+ e:"§ 142 Abs. 1 BGB bestimmt: Das angefochtene Rechtsgeschäft gilt als von Anfang an (ex tunc) nichtig. Es wird so behandelt, als ob es nie abgeschlossen worden wäre. Bereits erbrachte Leistungen sind nach § 812 BGB (ungerechtfertigte Bereicherung) zurückzugeben."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Was gilt nach § 122 BGB, wenn jemand eine WE wegen § 119 oder § 120 anficht?",
+ o:["Der Anfechtende hat dem anderen Teil das positive Interesse als Schadensersatz zu leisten","Der Anfechtende schuldet dem Anfechtungsgegner das negative Interesse (Vertrauensschaden)","Der Anfechtende hat keine Schadensersatzpflicht, nur Rückgabe bereits erbrachter Leistungen","Der Anfechtungsgegner trägt stets den gesamten Schaden selbst"],
+ a:1,
+ e:"§ 122 BGB normiert eine Schadensersatzpflicht für den Anfechtenden: Er muss das negative Interesse ersetzen, also den Schaden, der dem anderen dadurch entstanden ist, dass er auf die Gültigkeit der WE vertraut hat (Vertrauensschaden)."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Welches Recht gibt § 123 BGB bei arglistiger Täuschung oder widerrechtlicher Drohung?",
+ o:["Ein Recht auf Schadensersatz wegen positiven Interesses","Ein Anfechtungsrecht der getäuschten oder bedrohten Person","Ein gesetzliches Rücktrittsrecht ohne Fristsetzung","Ein Anspruch auf Vertragsanpassung wegen Wegfalls der Geschäftsgrundlage"],
+ a:1,
+ e:"§ 123 BGB gewährt dem Getäuschten oder Bedrohten ein Anfechtungsrecht. Anders als bei §§ 119, 120 BGB muss nach § 122 BGB kein Schadensersatz geleistet werden; es gelten jedoch besondere Fristen (§ 124 BGB: 1 Jahr ab Entdeckung)."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Wie lange ist die Anfechtungsfrist bei § 119 BGB (Irrtum)?",
+ o:["3 Jahre (Regelverjährung nach § 195 BGB)","Unverzüglich nach Kenntnis des Anfechtungsgrundes (§ 121 BGB)","2 Jahre ab Vertragsschluss","30 Jahre ohne Rücksicht auf Kenntnis"],
+ a:1,
+ e:"Bei Anfechtung wegen Irrtums (§ 119 BGB) muss die Anfechtung nach § 121 BGB unverzüglich erklärt werden, nachdem der Anfechtungsberechtigte vom Anfechtungsgrund Kenntnis erlangt hat. 'Unverzüglich' bedeutet ohne schuldhaftes Zögern."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Was versteht man unter einem 'Motivirrtum'?",
+ o:["Ein Irrtum über die Bedeutung der eigenen Erklärung","Ein Irrtum über den Beweggrund oder die Vorstellung, die zur WE geführt hat","Ein Irrtum über die Identität des Vertragspartners","Ein Irrtum über die rechtliche Natur des abgeschlossenen Vertrags"],
+ a:1,
+ e:"Der Motivirrtum betrifft die Überlegungen, die zur WE geführt haben (die Motive). Er berechtigt grundsätzlich nicht zur Anfechtung, da er sich auf die Willensbildung bezieht, nicht auf den Erklärungsakt selbst. Ausnahme: § 119 Abs. 2 BGB (Eigenschaftsirrtum)."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Was regelt § 120 BGB?",
+ o:["Den Irrtum über wesentliche Eigenschaften des Vertragspartners","Die Anfechtung bei fehlerhafter Übermittlung durch eine Mittelsperson oder Einrichtung","Die Anfechtung wegen Wegfalls der Geschäftsgrundlage","Den Irrtum bei notariell beurkundeten Verträgen"],
+ a:1,
+ e:"§ 120 BGB gibt ein Anfechtungsrecht, wenn eine WE durch eine zur Übermittlung verwendete Person oder Anstalt (z.B. Bote, Post, Telegramm) unrichtig übermittelt wurde. Die Rechtsfolgen sind dieselben wie bei § 119 BGB."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Welche Anfechtungsfrist gilt bei arglistiger Täuschung nach § 123 BGB?",
+ o:["Unverzüglich nach Kenntnis des Irrtums","Ein Jahr ab Entdeckung der Täuschung (§ 124 BGB)","Drei Jahre nach Vertragsschluss (Regelverjährung)","Zehn Jahre ohne Rücksicht auf Kenntnis"],
+ a:1,
+ e:"Bei Täuschung oder Drohung beträgt die Anfechtungsfrist nach § 124 BGB ein Jahr ab Entdeckung der Täuschung (bzw. ab Ende der Zwangslage bei Drohung). Die Höchstfrist beträgt 10 Jahre ab Abgabe der WE."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Wer trägt die Beweislast dafür, dass ein Irrtum vorlag?",
+ o:["Der Erklärungsempfänger muss beweisen, dass kein Irrtum vorlag","Der Anfechtende muss das Vorliegen des Anfechtungsgrundes beweisen","Das Gericht ermittelt den Irrtum von Amts wegen","Der Notar bestätigt das Vorliegen des Irrtums"],
+ a:1,
+ e:"Wer anficht, trägt die Beweislast für das Vorliegen des Anfechtungsgrundes, also z.B. für den Irrtum oder die Täuschung. Dies folgt dem allgemeinen Grundsatz, dass jede Partei die ihr günstigen Tatsachen beweisen muss."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Was versteht man unter dem 'negativen Interesse' (Vertrauensschaden)?",
+ o:["Den entgangenen Gewinn aus dem angefochtenen Vertrag","Den Schaden, der dadurch entstand, dass der Empfänger auf die Wirksamkeit der WE vertraut hat","Den Schaden aus der Nichterfüllung des Vertrags durch den Anfechtenden","Den Zinsschaden aus der verspäteten Rückabwicklung"],
+ a:1,
+ e:"Das negative Interesse (Vertrauensschaden) umfasst alle Aufwendungen und Vermögenseinbußen, die entstanden sind, weil der Empfänger darauf vertraut hat, dass die WE wirksam ist. Er soll so gestellt werden, als hätte er von der WE nie gewusst."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Gegenüber wem ist eine Anfechtungserklärung abzugeben?",
+ o:["Ausschließlich gegenüber dem zuständigen Zivilgericht","Gegenüber dem Anfechtungsgegner (dem anderen Teil des Rechtsgeschäfts)","Gegenüber dem Notar, der das Rechtsgeschäft beurkundet hat","Gegenüber dem Amtsgericht des Wohnsitzes des Anfechtenden"],
+ a:1,
+ e:"Die Anfechtungserklärung ist gegenüber dem Anfechtungsgegner abzugeben (§ 143 BGB), also gegenüber dem anderen Teil des angefochtenen Rechtsgeschäfts. Sie ist empfangsbedürftig und bedarf keiner besonderen Form."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Was ist ein 'Eigenschaftsirrtum' nach § 119 Abs. 2 BGB?",
+ o:["Ein Irrtum über die Identität des Vertragspartners","Ein Irrtum über verkehrswesentliche Eigenschaften einer Person oder Sache","Ein Irrtum über den vereinbarten Kaufpreis","Ein Irrtum über die Wirksamkeit einer Formvorschrift"],
+ a:1,
+ e:"§ 119 Abs. 2 BGB erfasst den Irrtum über Eigenschaften einer Person oder Sache, die im Verkehr als wesentlich angesehen werden. Beispiel: Man kauft ein Gemälde, das man für ein Original hält, es ist aber eine Fälschung. Dies berechtigt zur Anfechtung."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Welche Aussage zur Anfechtung ist korrekt?",
+ o:["Eine Anfechtung kann auf beliebige Zeit hinausgezögert werden","Die Anfechtungserklärung bedarf keiner Form, sie wirkt aber ex tunc","Eine Anfechtung macht den Vertrag nur für die Zukunft unwirksam","Nur Kaufverträge können nach dem BGB angefochten werden"],
+ a:1,
+ e:"Die Anfechtungserklärung ist formfrei (§ 143 BGB) und wirkt nach § 142 Abs. 1 BGB ex tunc, d.h. das Rechtsgeschäft gilt von Anfang an als nichtig. Sie kann auf jede Willenserklärung und jedes Rechtsgeschäft angewendet werden."},
+
+// ── KATEGORIE 4: Geschäftsfähigkeit & Formvorschriften (15) ───────────────
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Ab welchem Alter ist eine Person nach dem BGB voll geschäftsfähig?",
+ o:["Ab 16 Jahren (Altersgrenze für Teilvolljährigkeit)","Ab 18 Jahren (Volljährigkeit nach § 2 BGB)","Ab 21 Jahren (Strafmündigkeit nach dem JGG)","Ab 25 Jahren (volle Reife nach wissenschaftlichen Erkenntnissen)"],
+ a:1,
+ e:"Volle Geschäftsfähigkeit tritt mit der Vollendung des 18. Lebensjahres ein (§ 2 BGB: Volljährigkeit). Ab diesem Zeitpunkt kann eine Person rechtlich wirksam alle Rechtsgeschäfte selbstständig vornehmen."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was gilt für Willenserklärungen von Kindern unter 7 Jahren?",
+ o:["Sie sind schwebend unwirksam bis zur Genehmigung der Eltern","Sie sind nach § 105 Abs. 1 i.V.m. § 104 Nr. 1 BGB nichtig","Sie sind wirksam, wenn sie lediglich rechtlich vorteilhaft sind","Sie sind nur unwirksam, wenn die Eltern widersprechen"],
+ a:1,
+ e:"Kinder unter 7 Jahren sind nach § 104 Nr. 1 BGB geschäftsunfähig. Ihre Willenserklärungen sind gemäß § 105 Abs. 1 BGB nichtig – dies gilt absolut, also auch für lediglich rechtlich vorteilhafte Geschäfte."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was besagt der 'Taschengeldparagraph' (§ 110 BGB)?",
+ o:["Minderjährige dürfen unbegrenzt über ihr Taschengeld verfügen","Ein Vertrag gilt als wirksam, wenn der Minderjährige ihn mit überlassenen Mitteln vollständig erfüllt","Eltern müssen jedem Minderjährigen ausreichend Taschengeld bereitstellen","Minderjährige können nur Verträge über maximal 10 Euro schließen"],
+ a:1,
+ e:"§ 110 BGB: Ein von einem Minderjährigen ohne Einwilligung des gesetzlichen Vertreters geschlossener Vertrag gilt als von Anfang an wirksam, wenn der Minderjährige die vertragsmäßige Leistung mit Mitteln bewirkt, die ihm zu diesem Zweck oder zur freien Verfügung überlassen wurden."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was ist eine 'lediglich rechtlich vorteilhafte' Willenserklärung im Sinne von § 107 BGB?",
+ o:["Eine Erklärung, die dem Minderjährigen wirtschaftlich nützt","Eine Erklärung, die dem Minderjährigen keine rechtlichen Verpflichtungen auferlegt","Eine Erklärung mit besonderem emotionalen Wert für den Minderjährigen","Eine Erklärung mit staatlicher Genehmigung"],
+ a:1,
+ e:"§ 107 BGB: Der Minderjährige kann eine WE ohne Einwilligung des Vertreters wirksam abgeben, wenn sie lediglich rechtlich vorteilhaft ist, d.h. keine rechtlichen Nachteile oder Belastungen begründet. Wirtschaftliche Vorteile allein reichen nicht."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was ist der Unterschied zwischen Einwilligung und Genehmigung?",
+ o:["Einwilligung ist nachträglich, Genehmigung ist vorherig","Einwilligung ist vorherige Zustimmung (§ 183 BGB), Genehmigung ist nachträgliche Zustimmung (§ 184 BGB)","Beide Begriffe sind im BGB gleichbedeutend","Einwilligung betrifft Verträge, Genehmigung betrifft einseitige Rechtsgeschäfte"],
+ a:1,
+ e:"§ 183 BGB: Einwilligung = vorherige Zustimmung. § 184 BGB: Genehmigung = nachträgliche Zustimmung. Diese Unterscheidung ist wichtig bei beschränkt Geschäftsfähigen: Bis zur Genehmigung des gesetzlichen Vertreters ist das Rechtsgeschäft schwebend unwirksam."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was ist die Rechtsfolge bei einem Formverstoß nach § 125 BGB?",
+ o:["Das Rechtsgeschäft ist anfechtbar, aber zunächst wirksam","Das Rechtsgeschäft ist nichtig","Das Rechtsgeschäft ist schwebend unwirksam bis zur Heilung","Das Rechtsgeschäft ist vollwirksam, der Verstoß hat keine Rechtsfolge"],
+ a:1,
+ e:"§ 125 S. 1 BGB: Ein Rechtsgeschäft, das der durch Gesetz vorgeschriebenen Form ermangelt, ist nichtig. Der Formmangel führt also zur absoluten Nichtigkeit, nicht lediglich zur Anfechtbarkeit. Ausnahme: heilbare Formmängel (z.B. § 311b Abs. 1 S. 2 BGB)."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was verlangt die Schriftform nach § 126 BGB?",
+ o:["Die maschinelle Erstellung des Dokuments und zwei Zeugenunterschriften","Eine eigenhändige Namensunterschrift des Ausstellers","Die notarielle Beurkundung durch einen Notar","Eine digitale Signatur nach dem Signaturgesetz"],
+ a:1,
+ e:"Die Schriftform nach § 126 BGB erfordert eine eigenhändige Namensunterschrift des Ausstellers unter der Urkunde. Bei einem Vertrag muss jede Partei die für den anderen bestimmte Urkunde unterzeichnen (§ 126 Abs. 2 BGB)."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Welchen Zweck erfüllen gesetzliche Formvorschriften?",
+ o:["Ausschließlich die Erschwerung des Rechtsverkehrs zu staatlichen Kontrollzwecken","Übereilungsschutz, Beweissicherung und Beratungsfunktion","Ausschließlich die Beweissicherung für spätere Gerichtsverfahren","Nur die vereinfachte Archivierung von Rechtsgeschäften"],
+ a:1,
+ e:"Formvorschriften erfüllen verschiedene Zwecke: Übereilungsschutz (vor unbedachten Entschlüssen), Beweisfunktion (Dokumentation des Rechtsgeschäfts) und Beratungsfunktion (notarielle Beurkundung sichert fachkundige Beratung)."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was ist die beschränkte Geschäftsfähigkeit im BGB?",
+ o:["Die Fähigkeit, nur bestimmte Vertragsarten abzuschließen","Die Fähigkeit von 7- bis 17-Jährigen, Rechtsgeschäfte nur mit Zustimmung des Vertreters abzuschließen","Die teilweise Aufhebung der Geschäftsfähigkeit durch gerichtlichen Beschluss","Die Fähigkeit ausschließlich zu lediglich vorteilhaften Rechtsgeschäften"],
+ a:1,
+ e:"Beschränkt geschäftsfähig sind Minderjährige im Alter von 7 bis 17 Jahren (§§ 106 ff. BGB). Sie können Rechtsgeschäfte grundsätzlich nur mit Einwilligung des gesetzlichen Vertreters wirksam abschließen; lediglich rechtlich vorteilhafte Geschäfte sind ohne Zustimmung möglich."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Wann ist ein Vertrag wegen Geisteskrankheit nach § 104 Nr. 2 BGB nichtig?",
+ o:["Wenn der Vertragspartner wusste, dass die andere Partei psychisch krank ist","Wenn der Erklärende sich im Zustand dauerhafter krankhafter Störung der Geistestätigkeit befand, die freie Willensbildung ausschließt","Wenn ein ärztliches Attest die Geisteskrankheit bescheinigt","Wenn das Gericht die Geschäftsunfähigkeit nachträglich festgestellt hat"],
+ a:1,
+ e:"§ 104 Nr. 2 BGB: Geschäftsunfähig ist, wer sich in einem die freie Willensbestimmung ausschließenden Zustand krankhafter Störung der Geistestätigkeit befindet, sofern nicht der Zustand seiner Natur nach ein vorübergehender ist. Die WE ist nach § 105 Abs. 1 BGB nichtig."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Welche Formvorschrift gilt für den Kauf eines Grundstücks nach § 311b BGB?",
+ o:["Einfache Schriftform mit Unterschriften beider Parteien","Notarielle Beurkundung des Vertrags","Öffentliche Beglaubigung der Unterschriften","Eintragung in das Grundbuch als konstitutive Voraussetzung"],
+ a:1,
+ e:"§ 311b Abs. 1 S. 1 BGB: Ein Vertrag, durch den sich eine Partei verpflichtet, Eigentum an einem Grundstück zu übertragen oder zu erwerben, bedarf der notariellen Beurkundung. Ein Formmangel führt zur Nichtigkeit nach § 125 BGB; er kann aber nach § 311b Abs. 1 S. 2 BGB durch Auflassung und Eintragung geheilt werden."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was bedeutet 'schwebende Unwirksamkeit' eines Rechtsgeschäfts?",
+ o:["Das Rechtsgeschäft ist endgültig nichtig ohne Möglichkeit der Heilung","Das Rechtsgeschäft ist vorläufig nicht wirksam, kann aber noch wirksam werden","Das Rechtsgeschäft ist sofort wirksam, kann aber noch angefochten werden","Das Rechtsgeschäft ist teilweise wirksam, soweit keine Einwände bestehen"],
+ a:1,
+ e:"Schwebende Unwirksamkeit bedeutet, dass die Wirksamkeit eines Rechtsgeschäfts noch offen ist – es ist weder wirksam noch endgültig unwirksam. Typischer Fall: Rechtsgeschäft eines Minderjährigen ohne Einwilligung des gesetzlichen Vertreters; es wird wirksam durch Genehmigung oder endgültig unwirksam durch Verweigerung."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was ist die elektronische Form nach § 126a BGB?",
+ o:["Eine per E-Mail übermittelte Erklärung ohne weitere Anforderungen","Eine WE, die mit einer qualifizierten elektronischen Signatur versehen ist","Eine Erklärung, die auf einer elektronischen Handelsplattform abgegeben wird","Eine im Internet abgegebene WE mit einfacher E-Mail-Signatur"],
+ a:1,
+ e:"§ 126a BGB: Die elektronische Form setzt voraus, dass der Aussteller der Erklärung seinen Namen hinzufügt und das elektronische Dokument mit einer qualifizierten elektronischen Signatur nach dem Signaturgesetz versieht. Sie kann die Schriftform ersetzen, wenn das Gesetz dies nicht ausschließt."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Was gilt bei beschränkt geschäftsfähigen Minderjährigen für zweiseitige Verträge?",
+ o:["Sie sind immer und ausnahmslos nichtig","Sie sind schwebend unwirksam bis zur Genehmigung des gesetzlichen Vertreters","Sie sind voll wirksam, sobald der Minderjährige 16 Jahre alt ist","Sie sind wirksam, wenn der Minderjährige selbst davon überzeugt ist"],
+ a:1,
+ e:"Schließt ein 7- bis 17-Jähriger einen Vertrag ohne Einwilligung des gesetzlichen Vertreters ab, ist dieser nach § 108 BGB schwebend unwirksam. Er wird mit Genehmigung des Vertreters rückwirkend wirksam oder bei Verweigerung endgültig unwirksam."},
+
+// ── KATEGORIE 5: Stellvertretung (15) ─────────────────────────────────────
+{cat:"Stellvertretung",
+ q:"Welche drei Voraussetzungen müssen für eine wirksame Stellvertretung vorliegen?",
+ o:["Schriftliche Vollmacht, Handeln im eigenen Namen und Vertretungswille","Eigene WE des Vertreters, Handeln in fremdem Namen und Vertretungsmacht","Notarielle Vollmacht, Handeln in offenkundiger Vertretung und Geschäftsfähigkeit des Vertretenen","Genehmigung des Vertretenen, Handeln für fremde Rechnung und schriftlicher Auftrag"],
+ a:1,
+ e:"Nach § 164 Abs. 1 BGB wirkt die WE des Vertreters unmittelbar für und gegen den Vertretenen, wenn der Vertreter (1) eine eigene WE abgibt, (2) in fremdem Namen handelt (Offenkundigkeitsprinzip) und (3) über Vertretungsmacht verfügt."},
+
+{cat:"Stellvertretung",
+ q:"Was versteht man unter dem 'Offenkundigkeitsprinzip' der Stellvertretung?",
+ o:["Die Vollmacht muss öffentlich beglaubigt worden sein","Der Vertreter muss erkennen lassen, dass er nicht für sich, sondern für einen anderen handelt","Der Vertretene muss öffentlich bekannt sein","Die Vertretungsmacht muss im Handelsregister eingetragen sein"],
+ a:1,
+ e:"Das Offenkundigkeitsprinzip (§ 164 Abs. 1 BGB) verlangt, dass der Vertreter erkennbar macht, dass er in fremdem Namen handelt. Bleibt dies unklar, verpflichtet er sich nach § 164 Abs. 2 BGB selbst."},
+
+{cat:"Stellvertretung",
+ q:"Was ist eine Vollmacht im Sinne des BGB?",
+ o:["Der Vertrag zwischen Vertreter und Vertretenem über das Innenverhältnis","Die durch ein Rechtsgeschäft erteilte Vertretungsmacht (§ 166 Abs. 2 BGB)","Eine gerichtliche Ermächtigung zur Vornahme von Rechtsgeschäften","Die gesetzliche Vertretungsmacht kraft Amtes"],
+ a:1,
+ e:"Die Vollmacht ist die durch Rechtsgeschäft erteilte Vertretungsmacht (§ 166 Abs. 2 BGB). Sie ist von dem ihr zugrunde liegenden Grundgeschäft (z.B. Auftrag) im Außenverhältnis grundsätzlich unabhängig (Abstraktheit der Vollmacht)."},
+
+{cat:"Stellvertretung",
+ q:"Was gilt nach § 181 BGB für Insichgeschäfte?",
+ o:["Insichgeschäfte sind stets zulässig und wirksam","Ein Vertreter kann grundsätzlich kein Rechtsgeschäft zwischen dem Vertretenen und sich selbst vornehmen","Insichgeschäfte bedürfen nur der notariellen Beurkundung","Insichgeschäfte sind nur zwischen Kaufleuten unzulässig"],
+ a:1,
+ e:"§ 181 BGB: Ein Vertreter darf grundsätzlich nicht im Namen des Vertretenen mit sich selbst als anderem Teil ein Rechtsgeschäft vornehmen (Verbot des Selbstkontrahierens). Ausnahmen: wenn das Rechtsgeschäft ausschließlich in der Erfüllung einer Verbindlichkeit besteht oder der Vertretene das Insichgeschäft gestattet hat."},
+
+{cat:"Stellvertretung",
+ q:"Was ist die Rechtsfolge, wenn jemand als Vertreter ohne Vertretungsmacht handelt (§ 177 BGB)?",
+ o:["Der Vertrag ist sofort nichtig und kann nicht mehr geheilt werden","Der Vertrag ist schwebend unwirksam und wird durch Genehmigung des Vertretenen wirksam","Der Vertreter haftet stets persönlich ohne Ausnahme","Der Vertrag ist wirksam, wenn der Dritte gutgläubig war"],
+ a:1,
+ e:"§ 177 Abs. 1 BGB: Handelt jemand als Vertreter ohne Vertretungsmacht, hängt die Wirksamkeit des Vertrags von der Genehmigung des Vertretenen ab. Bis zur Genehmigung ist der Vertrag schwebend unwirksam. Verweigert der Vertretene die Genehmigung, haftet der Vertreter ohne Vertretungsmacht nach § 179 BGB."},
+
+{cat:"Stellvertretung",
+ q:"Wie unterscheiden sich Innen- und Außenvollmacht?",
+ o:["Innenvollmacht gilt nur im Ausland, Außenvollmacht im Inland","Innenvollmacht wird gegenüber dem Vertreter erteilt, Außenvollmacht gegenüber Dritten","Innenvollmacht ist formfrei, Außenvollmacht bedarf der Schriftform","Innenvollmacht gilt unbegrenzt, Außenvollmacht ist zeitlich begrenzt"],
+ a:1,
+ e:"Die Erteilung der Vollmacht nach § 167 Abs. 1 BGB kann entweder gegenüber dem Bevollmächtigten selbst (Innenvollmacht) oder gegenüber dem Dritten, gegenüber dem die Vertretung stattfinden soll (Außenvollmacht / Proklamation), erfolgen."},
+
+{cat:"Stellvertretung",
+ q:"Was versteht man unter der 'Duldungsvollmacht'?",
+ o:["Eine Vollmacht, die der Vertretene ausdrücklich schriftlich erteilt","Eine kraft Gesetzes entstehende Vertretungsmacht von Eltern für Kinder","Eine Rechtsscheinhaftung, wenn der Vertretene das Auftreten des Vertreters duldet","Eine Vollmacht, die nur für bestimmte duldsame Rechtshandlungen gilt"],
+ a:2,
+ e:"Die Duldungsvollmacht entsteht aus Rechtsscheinsgrundsätzen: Wenn der Vertretene weiß, dass jemand wiederholt in seinem Namen handelt und dies duldet, ohne einzuschreiten, muss er sich so behandeln lassen, als hätte er Vollmacht erteilt."},
+
+{cat:"Stellvertretung",
+ q:"Was ist der Unterschied zwischen Vertretungsmacht und Vollmacht?",
+ o:["Beide Begriffe sind identisch und werden synonym verwendet","Vertretungsmacht ist der Oberbegriff; Vollmacht ist die rechtsgeschäftlich erteilte Vertretungsmacht","Vollmacht ist der Oberbegriff; Vertretungsmacht entsteht nur kraft Gesetzes","Vertretungsmacht gilt im Außenverhältnis, Vollmacht nur im Innenverhältnis"],
+ a:1,
+ e:"Vertretungsmacht ist der Oberbegriff für die Befugnis, für einen anderen zu handeln. Sie kann kraft Gesetzes entstehen (z.B. elterliche Sorge, § 1629 BGB) oder rechtsgeschäftlich erteilt werden. Die rechtsgeschäftlich erteilte Vertretungsmacht heißt Vollmacht (§ 166 Abs. 2 BGB)."},
+
+{cat:"Stellvertretung",
+ q:"Was gilt für die Haftung des Vertreters ohne Vertretungsmacht nach § 179 BGB?",
+ o:["Der Vertreter ohne Vertretungsmacht haftet niemals persönlich","Der Vertreter haftet auf Erfüllung oder Schadensersatz, es sei denn, er kannte die fehlende Macht nicht","Der Dritte kann nur Erfüllung verlangen, nicht Schadensersatz","Der Vertretene haftet immer selbst, wenn er den Irrtum hätte erkennen können"],
+ a:1,
+ e:"§ 179 Abs. 1 BGB: Der Vertreter ohne Vertretungsmacht haftet dem Dritten wahlweise auf Erfüllung oder Schadensersatz. Ausnahme nach § 179 Abs. 3 BGB: Kannte er die fehlende Vertretungsmacht nicht (ohne Verschulden), haftet er nur auf das negative Interesse."},
+
+{cat:"Stellvertretung",
+ q:"Was ist eine Prokura im Handelsrecht und inwiefern hängt sie mit der Vollmacht zusammen?",
+ o:["Die Prokura ist identisch mit der gewöhnlichen Vollmacht nach § 166 BGB","Die Prokura ist eine gesetzlich geregelte, umfassende Vollmacht für Kaufleute nach HGB","Die Prokura ist eine Vertretungsmacht kraft Gesetzes ohne rechtsgeschäftliche Erteilung","Die Prokura gilt ausschließlich für öffentlich-rechtliche Institutionen"],
+ a:1,
+ e:"Die Prokura ist eine besondere, handelsrechtlich geregelte Form der Vollmacht (§§ 48 ff. HGB). Sie ermächtigt zu allen gerichtlichen und außergerichtlichen Handlungen, die der Betrieb eines Handelsgewerbes mit sich bringt. Sie muss ins Handelsregister eingetragen werden."},
+
+{cat:"Stellvertretung",
+ q:"Was gilt für die Form der Vollmachtserteilung nach § 167 Abs. 2 BGB?",
+ o:["Die Vollmacht bedarf stets der notariellen Beurkundung","Die Vollmacht ist in der Regel formfrei, auch wenn das Grundgeschäft der Form bedarf","Die Vollmacht bedarf derselben Form wie das Grundgeschäft","Die Vollmacht muss schriftlich erteilt und eigenhändig unterzeichnet sein"],
+ a:1,
+ e:"§ 167 Abs. 2 BGB: Die Vollmacht bedarf nicht der Form, die für das Rechtsgeschäft bestimmt ist, auf das sie sich bezieht. Grundsätzlich ist die Vollmachtserteilung also formfrei – Ausnahmen gibt es nur, wenn das Gesetz dies ausdrücklich anders bestimmt."},
+
+{cat:"Stellvertretung",
+ q:"Wann erlischt eine Vollmacht nach § 168 BGB?",
+ o:["Nur durch ausdrücklichen schriftlichen Widerruf des Vollmachtgebers","Mit dem Erlöschen des der Vollmacht zugrunde liegenden Rechtsverhältnisses oder durch Widerruf","Automatisch nach einem Jahr, wenn nicht verlängert wird","Nur durch Tod des Vollmachtgebers oder des Bevollmächtigten"],
+ a:1,
+ e:"§ 168 BGB: Die Vollmacht erlischt mit dem Erlöschen des Grundverhältnisses (z.B. Auftrag) sowie durch Widerruf. Der Widerruf ist nach § 168 S. 2 BGB grundsätzlich auch dann zulässig, wenn das Grundverhältnis fortbesteht, sofern es nicht ausgeschlossen wurde."},
+
+{cat:"Stellvertretung",
+ q:"Was ist die 'Anscheinsvollmacht'?",
+ o:["Eine echte Vollmacht, die dem Anschein nach nicht erteilt wurde","Eine Rechtsscheinhaftung bei fahrlässiger Nichtverhinderung des Auftretens als Vertreter","Eine Vollmacht, die nur dem äußeren Anschein nach besteht, aber tatsächlich wirksam ist","Eine gesetzliche Vertretungsmacht kraft sozialer Zugehörigkeit"],
+ a:1,
+ e:"Die Anscheinsvollmacht entsteht, wenn der Vertretene zwar das Auftreten des Vertreters nicht kannte, es aber bei pflichtgemäßer Sorgfalt hätte erkennen und verhindern können. Im Unterschied zur Duldungsvollmacht fehlt hier die positive Kenntnis."},
+
+{cat:"Stellvertretung",
+ q:"Gilt die Stellvertretungsregelung des BGB auch für höchstpersönliche Rechtsgeschäfte?",
+ o:["Ja, die Stellvertretung gilt ausnahmslos für alle Rechtsgeschäfte","Nein, bei höchstpersönlichen Rechtsgeschäften wie Eheschließung ist Stellvertretung ausgeschlossen","Ja, mit Genehmigung des Amtsgerichts ist Stellvertretung immer möglich","Nein, Stellvertretung ist generell nur im Handelsrecht möglich"],
+ a:1,
+ e:"Bei höchstpersönlichen Rechtsgeschäften (z.B. Eheschließung, Testamentserrichtung, Eidesleistung) ist Stellvertretung ausgeschlossen, da diese Akte eine persönliche Willenserklärung erfordern, die nicht durch eine andere Person abgegeben werden kann."},
+
+// ── KATEGORIE 6: Inhaltliche Schranken, AGB & Verjährung (15) ─────────────
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Was ist die Rechtsfolge eines Verstoßes gegen ein gesetzliches Verbot nach § 134 BGB?",
+ o:["Das Rechtsgeschäft ist nur schwebend unwirksam und heilbar","Das Rechtsgeschäft ist nichtig, wenn nicht aus dem Gesetz etwas anderes folgt","Das Rechtsgeschäft ist nur im B2C-Bereich unwirksam","Das Rechtsgeschäft ist anfechtbar innerhalb von drei Jahren"],
+ a:1,
+ e:"§ 134 BGB: Ein Rechtsgeschäft, das gegen ein gesetzliches Verbot verstößt, ist nichtig, sofern sich nicht aus dem Gesetz ein anderes ergibt. Ob Totalnichtigkeit eintritt, hängt von Sinn und Zweck der verletzten Verbotsnorm ab (einseitiges vs. beiderseitiges Verbot)."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Was ist Sittenwidrigkeit nach § 138 Abs. 1 BGB?",
+ o:["Ein Rechtsgeschäft, das gegen Steuerpflichten verstößt","Ein Rechtsgeschäft, das gegen das Anstandsgefühl aller billig und gerecht Denkenden verstößt","Ein Rechtsgeschäft, das gegen guten kaufmännischen Gepflogenheiten verstößt","Ein Rechtsgeschäft mit überhöhten Preisen nach Marktgesichtspunkten"],
+ a:1,
+ e:"§ 138 Abs. 1 BGB: Ein Rechtsgeschäft, das gegen die guten Sitten verstößt, ist nichtig. Der Maßstab der 'guten Sitten' ist das Anstandsgefühl aller billig und gerecht Denkenden – also ein objektivierter ethischer Mindeststandard des Rechtsverkehrs."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Was ist Wucher nach § 138 Abs. 2 BGB?",
+ o:["Jede Vereinbarung über marktunüblich hohe Preise","Ein Rechtsgeschäft mit auffälligem Missverhältnis der Leistungen und Ausbeutung einer Schwächesituation","Eine arglistige Täuschung über den wahren Wert einer Sache","Eine Vereinbarung unter Ausnutzung von Marktmacht"],
+ a:1,
+ e:"Wucher nach § 138 Abs. 2 BGB erfordert ein auffälliges Missverhältnis zwischen Leistung und Gegenleistung sowie die Ausbeutung einer Zwangslage, Unerfahrenheit, Mangel an Urteilsvermögen oder erheblicher Willensschwäche. Beide Elemente (objektiv + subjektiv) müssen vorliegen."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Was sind Allgemeine Geschäftsbedingungen (AGB) nach § 305 BGB?",
+ o:["Individuell ausgehandelte Vertragsbedingungen zwischen Kaufleuten","Für eine Vielzahl von Verträgen vorformulierte Vertragsbedingungen, die eine Partei der anderen stellt","Gesetzlich normierte Standardverträge für wiederkehrende Geschäfte","Muster-Vertragsklauseln, die von Gerichten vorgegeben werden"],
+ a:1,
+ e:"§ 305 Abs. 1 BGB: AGB sind alle für eine Vielzahl von Verträgen vorformulierten Vertragsbedingungen, die eine Vertragspartei (Verwender) der anderen Partei bei Abschluss eines Vertrags stellt. Entscheidend: Vorformulierung + Stellen durch eine Partei + Vielzahl von Verträgen."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Was gilt für überraschende Klauseln in AGB nach § 305c BGB?",
+ o:["Sie sind wirksam, wenn der Verwender sie besonders hervorhebt","Sie werden nicht Bestandteil des Vertrags, wenn sie nach den Umständen unerwartet sind","Sie müssen dem Vertragspartner 14 Tage vor Vertragsschluss mitgeteilt werden","Sie sind nur im B2C-Bereich unwirksam, zwischen Unternehmen aber zulässig"],
+ a:1,
+ e:"§ 305c Abs. 1 BGB: Bestimmungen in AGB, die nach den Umständen, insbesondere nach dem äußeren Erscheinungsbild des Vertrags, so ungewöhnlich sind, dass der Vertragspartner nicht mit ihnen zu rechnen braucht, werden nicht Vertragsbestandteil."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Was prüft die Generalklausel des § 307 BGB bei der AGB-Inhaltskontrolle?",
+ o:["Ob AGB-Klauseln schriftlich und klar formuliert wurden","Ob AGB-Klauseln den Vertragspartner entgegen Treu und Glauben unangemessen benachteiligen","Ob die AGB dem Verwender einen ausreichenden Gewinn sichern","Ob die AGB von einem Rechtsanwalt verfasst wurden"],
+ a:1,
+ e:"§ 307 Abs. 1 BGB: Bestimmungen in AGB sind unwirksam, wenn sie den Vertragspartner des Verwenders entgegen den Geboten von Treu und Glauben unangemessen benachteiligen. § 307 ist die Generalklausel der AGB-Inhaltskontrolle, die hinter den Verboten der §§ 308, 309 BGB steht."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Wie lautet die regelmäßige Verjährungsfrist nach § 195 BGB?",
+ o:["Ein Jahr ab Entstehung des Anspruchs","Drei Jahre (regelmäßige Verjährungsfrist nach § 195 BGB)","Zehn Jahre ab Entstehung und Kenntnis","Dreißig Jahre als absolute Verjährungshöchstfrist"],
+ a:1,
+ e:"§ 195 BGB: Die regelmäßige Verjährungsfrist beträgt drei Jahre. Sie gilt für die meisten zivilrechtlichen Ansprüche, sofern keine Sonderregelung eingreift (z.B. § 438 BGB: 2 Jahre beim Kauf; § 548 BGB: 6 Monate bei der Miete)."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Wann beginnt die regelmäßige Verjährungsfrist nach § 199 BGB?",
+ o:["Mit dem Tag, an dem der Anspruch entsteht, ohne Rücksicht auf Kenntnis","Mit dem Schluss des Jahres, in dem der Anspruch entstand und der Gläubiger Kenntnis von Anspruch und Schuldner erlangte","Mit dem Tag, an dem der Gläubiger Klage erheben könnte","Mit dem Zeitpunkt der gerichtlichen Geltendmachung des Anspruchs"],
+ a:1,
+ e:"§ 199 Abs. 1 BGB: Die regelmäßige Verjährungsfrist beginnt mit dem Schluss des Jahres, in dem (1) der Anspruch entstanden ist und (2) der Gläubiger von den den Anspruch begründenden Umständen und der Person des Schuldners Kenntnis erlangt hat oder grob fahrlässig nicht erlangte."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Welche Wirkung hat die Verjährung nach § 214 BGB?",
+ o:["Der Anspruch erlischt automatisch mit Ablauf der Verjährungsfrist","Der Schuldner erhält ein dauerndes Leistungsverweigerungsrecht (Einrede)","Der Gläubiger verliert sein Klagerecht vor Gericht vollständig","Der Anspruch wird in eine Naturalobligation umgewandelt"],
+ a:1,
+ e:"§ 214 Abs. 1 BGB: Nach Eintritt der Verjährung ist der Schuldner berechtigt, die Leistung zu verweigern. Der Anspruch selbst erlischt nicht – er bleibt als unvollkommene Verbindlichkeit bestehen. Der Schuldner muss die Einrede der Verjährung aktiv erheben."},
+
+// ── MULTI-SELECT FRAGEN ────────────────────────────────────────────────────
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"Welche Elemente gehören zum subjektiven Tatbestand einer Willenserklärung? (Mehrere Antworten richtig)",
+ o:["Handlungswille","Schriftform oder sonstige Formvoraussetzung","Erklärungsbewusstsein","Geschäftswille"],
+ a:[0,2,3],
+ e:"Der subjektive Tatbestand der WE besteht aus drei Elementen: Handlungswille (Wille zur Handlung selbst), Erklärungsbewusstsein (Bewusstsein rechtserheblichen Handelns) und Geschäftswille (Wille zu einem bestimmten Rechtsgeschäft). Formvoraussetzungen gehören zum objektiven Tatbestand."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Welche Bücher enthält das BGB? (Mehrere Antworten richtig)",
+ o:["Allgemeiner Teil","Handelsrecht und Gesellschaftsrecht","Schuldrecht","Sachenrecht"],
+ a:[0,2,3],
+ e:"Das BGB enthält fünf Bücher: Allgemeiner Teil, Schuldrecht, Sachenrecht, Familienrecht und Erbrecht. Das Handelsrecht ist im HGB geregelt, das Gesellschaftsrecht im GmbHG, AktG und anderen Spezialgesetzen."},
+
+{cat:"Anfechtung von Willenserklärungen",
+ q:"Welche Irrtümer berechtigen nach §§ 119 f. BGB zur Anfechtung? (Mehrere Antworten richtig)",
+ o:["Inhaltsirrtum (§ 119 Abs. 1 Alt. 1 BGB)","Motivirrtum über allgemeine Beweggründe","Eigenschaftsirrtum (§ 119 Abs. 2 BGB)","Übermittlungsirrtum (§ 120 BGB)"],
+ a:[0,2,3],
+ e:"Zur Anfechtung berechtigen: Inhalts- und Erklärungsirrtum (§ 119 Abs. 1), Eigenschaftsirrtum (§ 119 Abs. 2) und Übermittlungsirrtum (§ 120). Der bloße Motivirrtum (Irrtum über Beweggründe) berechtigt dagegen grundsätzlich nicht zur Anfechtung."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Welche Zwecke erfüllen gesetzliche Formvorschriften typischerweise? (Mehrere Antworten richtig)",
+ o:["Übereilungsschutz (Schutz vor unbedachten Erklärungen)","Vereinfachung des Rechtsverkehrs durch Formlosigkeit","Beweisfunktion (Dokumentation des Rechtsgeschäfts)","Beratungsfunktion (z.B. durch Notar)"],
+ a:[0,2,3],
+ e:"Formvorschriften dienen dem Übereilungsschutz (z.B. Schriftform bei Bürgschaft), der Beweisfunktion (Dokumentation) und der Beratungsfunktion (notarielle Beurkundung). Formvorschriften schränken den Rechtsverkehr eher ein, vereinfachen ihn nicht."},
+
+{cat:"Stellvertretung",
+ q:"Welche Voraussetzungen müssen für eine wirksame Stellvertretung nach § 164 BGB vorliegen? (Mehrere Antworten richtig)",
+ o:["Eigene Willenserklärung des Vertreters","Handeln in fremdem Namen (Offenkundigkeitsprinzip)","Notarielle Vollmacht in jedem Fall","Vertretungsmacht des Vertreters"],
+ a:[0,1,3],
+ e:"§ 164 BGB erfordert drei Voraussetzungen: (1) eigene WE des Vertreters (nicht lediglich Botentätigkeit), (2) Handeln in fremdem Namen (Offenkundigkeitsprinzip) und (3) Vertretungsmacht. Eine notarielle Vollmacht ist nur in Ausnahmefällen erforderlich."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Was sind typische Merkmale Allgemeiner Geschäftsbedingungen nach § 305 BGB? (Mehrere Antworten richtig)",
+ o:["Vorformulierung für eine Vielzahl von Verträgen","Individuelle Aushandlung der Klauseln zwischen den Parteien","Stellung durch eine Vertragspartei gegenüber der anderen","Einsatz im Massengeschäft ohne individuelle Gestaltung"],
+ a:[0,2,3],
+ e:"AGB kennzeichnen: Vorformulierung für eine Vielzahl von Verträgen, Stellen durch eine Partei sowie typisierter Einsatz. Ausdrücklich ausgeschlossen sind individuell ausgehandelte Klauseln – diese unterfallen nicht der AGB-Kontrolle (§ 305 Abs. 1 S. 3 BGB)."},
+
+{cat:"Inhaltliche Schranken, AGB & Verjährung",
+ q:"Welche Aussagen zur Verjährung nach dem BGB sind korrekt? (Mehrere Antworten richtig)",
+ o:["Die regelmäßige Verjährungsfrist beträgt drei Jahre (§ 195 BGB)","Mit Ablauf der Verjährungsfrist erlischt der Anspruch automatisch","Der Schuldner erhält nach § 214 BGB ein dauerndes Leistungsverweigerungsrecht","Die Verjährung beginnt gem. § 199 BGB mit Schluss des Jahres der Kenntnis"],
+ a:[0,2,3],
+ e:"Die regelmäßige Verjährungsfrist beträgt 3 Jahre (§ 195). Der Anspruch erlischt nicht – der Schuldner erhält nur eine Einrede (§ 214). Der Beginn richtet sich nach § 199 BGB (Schluss des Jahres der Entstehung + Kenntnis). Der Anspruch selbst bleibt als Naturalobligation bestehen."},
+
+{cat:"Einführung & Privatrecht",
+ q:"Was sind typische Beispiele für Verfügungsgeschäfte? (Mehrere Antworten richtig)",
+ o:["Übereignung einer beweglichen Sache nach § 929 BGB","Abschluss eines Kaufvertrags nach § 433 BGB","Abtretung einer Forderung nach § 398 BGB","Abschluss eines Werkvertrags nach § 631 BGB"],
+ a:[0,2],
+ e:"Verfügungsgeschäfte wirken unmittelbar auf ein Recht ein: die Übereignung nach § 929 BGB überträgt das Eigentum, die Abtretung nach § 398 BGB überträgt eine Forderung. Kaufvertrag und Werkvertrag sind dagegen Verpflichtungsgeschäfte."},
+
+{cat:"Willenserklärungen & Vertragslehre",
+ q:"In welchen Fällen kann Schweigen ausnahmsweise als Willenserklärung gelten? (Mehrere Antworten richtig)",
+ o:["Bei ausdrücklicher vertraglicher Vereinbarung, dass Schweigen als Zustimmung gilt","Bei allen alltäglichen Erklärungen im normalen Rechtsverkehr","Beim kaufmännischen Bestätigungsschreiben kraft Handelsgewohnheitsrecht","Bei gesetzlich normierten Ausnahmen wie § 516 Abs. 2 BGB (Schenkung)"],
+ a:[0,2,3],
+ e:"Schweigen ist grundsätzlich keine WE. Ausnahmen: (1) vertragliche Vereinbarung, (2) kaufmännisches Bestätigungsschreiben (Handelsgewohnheitsrecht), (3) gesetzliche Anordnung wie § 516 Abs. 2 S. 2 BGB (Schenkung durch Unterlassen der Ablehnung). Im allgemeinen Rechtsverkehr gilt Schweigen nicht als Zustimmung."},
+
+{cat:"Geschäftsfähigkeit & Formvorschriften",
+ q:"Welche Aussagen zur Geschäftsfähigkeit von Minderjährigen nach dem BGB sind korrekt? (Mehrere Antworten richtig)",
+ o:["Kinder unter 7 Jahren sind geschäftsunfähig (§ 104 Nr. 1 BGB)","7- bis 17-Jährige sind voll geschäftsfähig","Lediglich rechtlich vorteilhafte Geschäfte kann ein Minderjähriger ohne Zustimmung vornehmen","§ 110 BGB erlaubt Verträge mit überlassenen Mitteln auch ohne Einwilligung"],
+ a:[0,2,3],
+ e:"Kinder unter 7 Jahren sind geschäftsunfähig (§ 104 Nr. 1), 7- bis 17-Jährige sind beschränkt geschäftsfähig. Lediglich rechtlich vorteilhafte Geschäfte sind ohne Zustimmung wirksam (§ 107), ebenso Verträge, die mit eigenen überlassenen Mitteln erfüllt werden (§ 110 BGB)."}
+
+];
+
+// ── Engine ─────────────────────────────────────────────────────────────────
+let order=[], idx=0, score=0, answered=false, multiSel=[], catStats={};
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function isMulti(q){return Array.isArray(q.a);}
+
+function init(){
+  order=shuffle([...Array(QUESTIONS.length).keys()]);
+  idx=0; score=0; answered=false; multiSel=[]; catStats={};
+  QUESTIONS.forEach(q=>{if(!catStats[q.cat])catStats[q.cat]={c:0,t:0};});
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered=false; multiSel=[];
+  const q=QUESTIONS[order[idx]];
+  const pct=Math.round(((idx+1)/order.length)*100);
+  document.getElementById('progress-bar').style.width=pct+'%';
+  document.getElementById('progress-label').textContent='Frage '+(idx+1)+' von '+order.length;
+  document.getElementById('cat-tag').textContent=q.cat;
+  document.getElementById('question-text').textContent=q.q;
+  const hint=document.getElementById('multi-hint');
+  hint.style.display=isMulti(q)?'block':'none';
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  ['A','B','C','D'].forEach((l,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option';
+    btn.innerHTML='<span class="option-letter">'+l+'</span><span>'+q.o[i]+'</span>';
+    btn.onclick=isMulti(q)?()=>toggleMulti(i):()=>selectAnswer(i);
+    opts.appendChild(btn);
+  });
+  const cb=document.getElementById('confirm-btn');
+  cb.style.display=isMulti(q)?'block':'none';
+  cb.disabled=true;
+  document.getElementById('feedback').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+}
+
+function toggleMulti(i){
+  if(answered)return;
+  const opts=document.getElementById('options').children;
+  const pos=multiSel.indexOf(i);
+  if(pos===-1){multiSel.push(i);opts[i].classList.add('selected');}
+  else{multiSel.splice(pos,1);opts[i].classList.remove('selected');}
+  document.getElementById('confirm-btn').disabled=multiSel.length===0;
+}
+
+function confirmMulti(){
+  if(answered)return;
+  answered=true;
+  const q=QUESTIONS[order[idx]];
+  const correct=q.a.slice().sort().join(',');
+  const given=multiSel.slice().sort().join(',');
+  const ok=correct===given;
+  if(ok)score++;
+  catStats[q.cat].t++;
+  if(ok)catStats[q.cat].c++;
+  const opts=document.getElementById('options').children;
+  for(let i=0;i<opts.length;i++){
+    opts[i].disabled=true;
+    opts[i].classList.remove('selected');
+    if(q.a.includes(i))opts[i].classList.add('correct');
+    else if(multiSel.includes(i))opts[i].classList.add('wrong');
+  }
+  document.getElementById('confirm-btn').style.display='none';
+  showFeedback(ok,q.e);
+}
+
+function selectAnswer(i){
+  if(answered)return;
+  answered=true;
+  const q=QUESTIONS[order[idx]];
+  const ok=i===q.a;
+  if(ok)score++;
+  catStats[q.cat].t++;
+  if(ok)catStats[q.cat].c++;
+  const opts=document.getElementById('options').children;
+  for(let j=0;j<opts.length;j++){
+    opts[j].disabled=true;
+    if(j===q.a)opts[j].classList.add('correct');
+    else if(j===i)opts[j].classList.add('wrong');
+  }
+  showFeedback(ok,q.e);
+}
+
+function showFeedback(ok,expl){
+  const fb=document.getElementById('feedback');
+  fb.className='feedback '+(ok?'correct':'wrong');
+  fb.innerHTML='<div class="feedback-icon">'+(ok?'✓ Richtig!':'✗ Leider falsch')+'</div>'+expl;
+  fb.style.display='block';
+  const nb=document.getElementById('next-btn');
+  nb.style.display='block';
+  nb.textContent=idx+1<order.length?'Weiter →':'Ergebnis anzeigen';
+}
+
+function nextQuestion(){
+  idx++;
+  if(idx>=order.length){showResults();return;}
+  renderQuestion();
+}
+
+function showResults(){
+  const pct=Math.round((score/order.length)*100);
+  let cats='';
+  Object.entries(catStats).forEach(([n,s])=>{
+    const p=s.t>0?Math.round((s.c/s.t)*100):0;
+    cats+='<div class="cat-row"><div class="cat-name">'+n+' ('+s.c+'/'+s.t+')</div>'
+      +'<div class="cat-bar-bg"><div class="cat-bar" style="width:'+p+'%"></div></div>'
+      +'<div class="cat-pct">'+p+' %</div></div>';
+  });
+  const grade=pct>=85?'Ausgezeichnet ⭐':pct>=70?'Gut gemacht 👍':'Weiter üben 💪';
+  document.getElementById('quiz-container').innerHTML=
+    '<div class="results"><h2>Ergebnis – BGB I</h2>'
+    +'<div class="score-big">'+score+'/'+order.length+'</div>'
+    +'<div class="score-label">'+pct+' % – '+grade+'</div>'
+    +'<div class="cat-results">'+cats+'</div>'
+    +'<button class="restart-btn" onclick="location.reload()">🔄 Quiz wiederholen</button></div>'
+    +'<div class="footer" style="text-align:center;padding:10px 32px 14px;font-size:.69rem;color:#bbb;border-top:1px solid #eee">Skript GK BGB I · Prof. Dr. W. Buchwitz · Uni Würzburg SS 2024</div>';
+}
+
+window.onload=init;
+</script>
+</body>
+</html>
